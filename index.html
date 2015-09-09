@@ -10,71 +10,68 @@
     <title>Kunal-Rai.Video.Stream</title>
 </head>
 <body>
+<!-- Video Output Zone -->
+<span>Your PHONE: </span>
+<input id="myID" type="text" value=""  /><br />
+<span>Call Number: </span>
+<input id="callID" type="text" value=""  /><br />
+<button value="call" onclick="callPhone()" >Call</button>
+<!-- Libs and Scripts -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
+<script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+<script src="http://stephenlb.github.io/webrtc-sdk/js/webrtc.js"></script>
 
-<form name="streamForm" id="stream" action="#" onsubmit="return stream(this);">
-    <input type="text" name="streamname" id="streamname" placeholder="Pick a stream name!"/>
-    <input type="submit" name="stream_submit" value="Stream">
-    <div id="stream-info">Watching: <span id="here-now">0</span></div>
-</form>
+<div id="video-out"> Making a Call </div>
 
-<form name="watchForm" id="watch" action="#" onsubmit="return watch(this);">
-    <input type="text" name="number" id="number" placeholder="Enter stream to join!" />
-    <input type="submit" value="Watch"/>
-</form>
-<div id="video-out"><!-- Stream goes here --></div>
-<div id="inStream">
-    <button id="end" onclick="end()">Done</button> <br>
-    Generate Embed: <button onclick="genEmbed(400,600)">Tall</button><button onclick="genEmbed(600,400)">Wide</button><button onclick="genEmbed(500,500)">Square</button><br>
-    <div id="embed-code"></div>
-</div>
-<script type="text/javascript">
+<script>
 
     var VideoChat = (function(){
 
         var phone = null;
 
         return {
-            InitPhone: function (userId, elementId) {
-                console.log(userId);
+            InitPhone : function(userId, elementId)
+            {
                 phone = PHONE({
-                    number: userId,
-                    publish_key: 'pub-c-a0b56e9b-b388-4cbb-932e-b5ef0ac2b260',
-                    subscribe_key: 'sub-c-167d070c-56b7-11e5-b018-0619f8945a4f',
-                    ssl: true
+                    number        : userId,
+                    publish_key   :  'pub-c-bd763b10-ac21-4ff4-acc6-406abd20b874',
+                    subscribe_key : 'sub-c-6d7bcf4a-5647-11e5-8a9f-0619f8945a4f',
+                    ssl           : true
                 });
 
                 // When Call Comes In or is to be Connected
-                phone.receive(function (session) {
-                    $("#" + elementId).empty();
+                phone.receive(function(session){
+                    $("#"+elementId).empty();
                     // Display Your Friend's Live Video
-                    session.connected(function (session) {
+                    session.connected(function(session){
                         PUBNUB.$(elementId).appendChild(session.video);
                     });
                 });
             },
 
-            Call: function (callID) {
-                if (callID != null || callID != "") {
+            Call : function(callID)
+            {
+                if (callID != null || callID != "")
+                {
                     var session = phone.dial(callID);
                 }
             }
         }})();
 
+        VideoChat.InitPhone($("#streamname").val() , 'video-out');
 
-function stream(frm)
-{
-    VideoChat.InitPhone($("#streamname").val() , 'video-out');
+function callPhone(){
+    VideoChat.Call($("#callID").val());
 }
-function watch(frm)
-{
-    VideoChat.Call($("#number").val())
-}
-
-
     //VideoChat.Call();
 
 
 </script>
+
+
+
+
+
 </body>
 </html>
