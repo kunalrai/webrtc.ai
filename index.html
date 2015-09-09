@@ -12,40 +12,58 @@
 <body>
 
 <div id="video-out"> Making a Call </div>
-
+<input id="callID" type="text" value=""  /><br />
+<button value="call" onclick="callPhone()" >Call</button>
 <!-- Libs and Scripts -->
-<script>(function(){
-    // ~Warning~ You must get your own API Keys for non-demo purposes.
-    // ~Warning~ Get your PubNub API Keys: http://www.pubnub.com/get-started/
-    // The phone *number* can by any string value
-    var phone = PHONE({
-        number        : '1234',
-        publish_key   :  'pub-c-bd763b10-ac21-4ff4-acc6-406abd20b874',
-        subscribe_key : 'sub-c-6d7bcf4a-5647-11e5-8a9f-0619f8945a4f',
-        ssl           : true
-    });
+<script>var VideoChat=(function(){
 
-    // As soon as the phone is ready we can make calls
-    phone.ready(function(){
+    var phone = null;
+    return {
+        InitPhone:function(){
+                phone = PHONE({
+                number        : '1234',
+                publish_key   : 'pub-c-bd763b10-ac21-4ff4-acc6-406abd20b874',
+                subscribe_key : 'sub-c-6d7bcf4a-5647-11e5-8a9f-0619f8945a4f',
+                ssl           : true
+            });
 
-        // Dial a Number and get the Call Session
-        // For simplicity the phone number is the same for both caller/receiver.
-        // you should use different phone numbers for each user.
-        var session = phone.dial('1234');
+            // When Call Comes In or is to be Connected
+            phone.receive(function(session){
 
-    });
-
-    // When Call Comes In or is to be Connected
-    phone.receive(function(session){
-
-        // Display Your Friend's Live Video
-        session.connected(function(session){
-            PUBNUB.$('video-out').appendChild(session.video);
+                // Display Your Friend's Live Video
+                session.connected(function(session){
+                    PUBNUB.$('video-out').appendChild(session.video);
+                });
         });
 
-    });
+    },
+        Call: function(callID){
+            if(phone==null)
+            {
+                phone = PHONE({
+                    number        : '3456',
+                    publish_key   : 'pub-c-bd763b10-ac21-4ff4-acc6-406abd20b874',
+                    subscribe_key : 'sub-c-6d7bcf4a-5647-11e5-8a9f-0619f8945a4f',
+                    ssl           : true
+                });
+            }
+            phone.ready(function(){
+                var session = phone.dial(callID);
 
-})();</script>
+            });
+        }
+    }
+
+
+
+
+})();
+function callPhone()
+{
+    VideoChat.Call($('#callID').val());
+}
+
+</script>
 
 
 
